@@ -2,60 +2,83 @@
 
 'use client'; 
 
-import React from 'react';
-import { useRouter } from 'next/navigation'; // Using standard Next.js router
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+// --- Import NextAuth Client functions ---
+import { signIn } from 'next-auth/react'; 
 
-function LandingPage() {
+function AuthPage() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleNavigate = (path) => {
-    router.push(path);
+  /**
+   * Handles the click event to initiate the Google OAuth sign-in flow.
+   */
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    
+    try {
+      // 1. Call signIn, specifying the provider ('google')
+      // and redirecting to the dashboard on success.
+      const result = await signIn('google', { 
+        redirect: false, // Prevents full page reload/redirect from the hook itself
+        callbackUrl: '/dashboard' // Where to go after successful authentication
+      });
+
+      if (result && result.error) {
+        // Handle errors (e.g., user cancels, Google service error)
+        console.error("Google Sign-In Error:", result.error);
+        alert(`Authentication failed: ${result.error}`);
+      } else {
+        // If no error, the callback URL logic will take over the navigation
+        // If redirect:false is used, manually push to the dashboard on success
+        if (result && !result.error) {
+            router.push('/dashboard');
+        }
+      }
+
+    } catch (error) {
+      console.error("Sign-in process failed:", error);
+      alert("An unexpected error occurred during sign-in.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    // Outer container: Full screen height, centered content, dark background
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4">
+    // Outer container: Dark theme, centered
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
       
-      {/* Search Box on Top */}
-      <div className="w-full max-w-xl mb-20">
-        <input 
-          type="text" 
-          placeholder="🔍 Search medications or history..." 
-          className="w-full p-3 rounded-xl bg-gray-700 text-gray-200 border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xl transition"
-        />
-      </div>
-
-      {/* Quick Action Buttons Container */}
-      {/* Flex container to center items, space out, and keep them in one row */}
-      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center">
+      <div className="w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-2xl border border-indigo-700 text-center">
         
-        {/* Action 1: Add Medication Card */}
+        <h1 className="text-3xl font-bold mb-4 text-indigo-400">Pill Scheduler</h1>
+        <p className="text-gray-400 mb-8">Secure access via your preferred provider.</p>
+        
+        {/* OAuth Button (Google Example) */}
         <button 
-          className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
-          onClick={() => handleNavigate('/add-medication')}
+          type="button" 
+          onClick={handleGoogleSignIn}
+          disabled={isLoading}
+          className="w-full p-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition disabled:bg-red-900 flex items-center justify-center space-x-2"
         >
-          <div className="text-3xl mb-2">➕</div>
-          <p className="text-lg font-bold text-indigo-400">Add New Medication</p>
-          <p className="text-sm text-gray-400 mt-1">Set up pill, dosage, and schedule.</p>
+          {isLoading ? (
+            'Redirecting...'
+          ) : (
+            <>
+              {/* Note: You would typically use a proper SVG icon here */}
+              <span>G</span> 
+              <span>Sign in with Google</span>
+            </>
+          )}
         </button>
 
-        {/* Action 2: Calendar View Card */}
-        <button 
-          className="flex-1 p-6 bg-gray-800 border border-teal-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
-          onClick={() => handleNavigate('/calendar')}
-        >
-          <div className="text-3xl mb-2">📅</div>
-          <p className="text-lg font-bold text-teal-400">View Calendar</p>
-          <p className="text-sm text-gray-400 mt-1">Check doses and track intake history.</p>
-        </button>
+        <div className="mt-8 text-sm text-gray-500">
+            By signing in, you agree to our terms of service.
+        </div>
 
       </div>
-      
-      {/* Welcome Text centered */}
-      <h2 className="mt-12 text-2xl font-light text-gray-400">👋 Your Pill Scheduler</h2>
-      
     </div>
   );
 }
 
-export default LandingPage;
+export default AuthPage;
