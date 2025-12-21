@@ -5,7 +5,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 // Import NextAuth client functions to check session status
-import { useSession, signOut } from 'next-auth/react'; 
+import { useSession, signOut } from 'next-auth/react';
 
 function DashboardPage() {
   const router = useRouter();
@@ -29,43 +29,61 @@ function DashboardPage() {
   if (status === 'unauthenticated') {
     // Optionally redirect immediately or show a link to login
     router.push('/');
-    return null; 
+    return null;
   }
 
   // --- 3. Render Dashboard for Authenticated Users ---
   // The 'session' object is now guaranteed to contain user data (email, name, image, etc.)
-  
+
   return (
     // Outer container: Full screen height, centered content, dark background
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4">
-      
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center">
       {/* Header with User Info and Logout */}
-      <div className="w-full max-w-xl flex justify-between items-center mb-8">
-        <h2 className="text-xl font-light text-gray-400">
-          Welcome, {session?.user?.name?.split(' ')[0] || 'User'}!
-        </h2>
-        <button 
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="py-1 px-3 bg-red-600 text-sm rounded-lg hover:bg-red-700 transition"
-        >
-          Logout
-        </button>
-      </div>
+      <nav className="w-full border-b border-zinc-800 bg-black/50 backdrop-blur-md sticky top-0 z-50">
+        {/* Inner Nav Container (Centers the content inside the full-width bar) */}
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+
+          {/* Logo Section */}
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <svg className="w-5 h-5 text-white rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+            </div>
+        <span className="text-4xl font-black tracking-tighter text-white uppercase">
+          Pill<span className="text-indigo-500">Pal</span>
+        </span>
+          </div>
+
+          {/* Auth/User Section */}
+          <div className="flex items-center gap-6">
+            <span className="hidden md:block text-sm font-medium text-zinc-500">
+              {session?.user?.name}
+            </span>
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="py-2 px-5 bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-bold uppercase tracking-widest rounded-full hover:text-white hover:border-zinc-500 transition-all"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </nav>
 
       {/* Search Box on Top */}
-      <div className="w-full max-w-xl mb-8">
-        <input 
-          type="text" 
-          placeholder="🔍 Search medications or history..." 
+      <div className="w-full max-w-xl mb-8 mt-8">
+        <input
+          type="text"
+          placeholder="🔍 Search medications or history..."
           className="w-full p-3 rounded-xl bg-gray-700 text-gray-200 border border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xl transition"
         />
       </div>
 
       {/* Quick Action Buttons Container */}
       <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center">
-        
+
         {/* Action 1: Add Medication Card */}
-        <button 
+        <button
           className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
           onClick={() => handleNavigate('/add-medication')}
         >
@@ -75,7 +93,7 @@ function DashboardPage() {
         </button>
 
         {/* Action 2: Calendar View Card */}
-        <button 
+        <button
           className="flex-1 p-6 bg-gray-800 border border-teal-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
           onClick={() => handleNavigate('/calendar')}
         >
