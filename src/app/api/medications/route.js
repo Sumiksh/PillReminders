@@ -16,15 +16,25 @@ export async function POST(request) {
     const medicationData = await request.json();
     console.log("medicationData",medicationData)
     // Save to Firebase using the Admin SDK
-    const docRef = await adminDb.collection('medications').add({
-      name: medicationData.name,
-      dosage: medicationData.dosage,
-      startDate: medicationData.startDate,
-      times: medicationData.times,
-      userId: session.user.email,
-      createdAt: new Date().toISOString(),
-    });
-
+    // const docRef = await adminDb.collection('medications').add({
+    //   name: medicationData.name,
+    //   dosage: medicationData.dosage,
+    //   startDate: medicationData.startDate,
+    //   times: medicationData.times,
+    //   userId: session.user.email,
+    //   createdAt: new Date().toISOString(),
+    // });
+    const docRef = await adminDb
+      .collection('users')             // 1. Enter the users collection
+      .doc(session.user.email)         // 2. Select the specific user's document
+      .collection('medications')       // 3. Enter that user's private medications folder
+      .add({                           // 4. Add the pill data
+        name: medicationData.name,
+        dosage: medicationData.dosage,
+        startDate: medicationData.startDate,
+        times: medicationData.times,
+        createdAt: new Date().toISOString(),
+      });
     return NextResponse.json({ success: true, id: docRef.id }, { status: 200 });
   } catch (error) {
     console.error("FULL FIREBASE ERROR:", error);
