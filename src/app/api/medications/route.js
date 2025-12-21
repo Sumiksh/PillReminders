@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; 
+import { authOptions } from "@/utils/authOptions"; 
 import { adminDb } from "@/utils/firebaseAdmin";
 
 export async function POST(request) {
-  // 1. Verify the user is logged in using the session
+  // Use the exported authOptions here to verify the session
+  console.log("api hitting backed")
   const session = await getServerSession(authOptions);
   
   if (!session) {
@@ -12,19 +13,21 @@ export async function POST(request) {
   }
 
   try {
-    // 2. Get data from the frontend request
     const medicationData = await request.json();
-
-    // 3. Save to Firestore using Admin SDK
+    console.log("medicationData",medicationData)
+    // Save to Firebase using the Admin SDK
     const docRef = await adminDb.collection('medications').add({
-      ...medicationData,
-      userId: session.user.email, // Securely attach the user email from the session
+      name: medicationData.name,
+      dosage: medicationData.dosage,
+      startDate: medicationData.startDate,
+      times: medicationData.times,
+      userId: session.user.email,
       createdAt: new Date().toISOString(),
     });
 
-    return NextResponse.json({ id: docRef.id, message: "Saved successfully" }, { status: 200 });
+    return NextResponse.json({ success: true, id: docRef.id }, { status: 200 });
   } catch (error) {
-    console.error("Backend Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("FULL FIREBASE ERROR:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

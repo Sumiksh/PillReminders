@@ -53,10 +53,6 @@ function AddMedicationForm() {
       return;
     }
 
-    // Prepare data for the backend (e.g., combining date and time)
-    //const dataToSave = { ...medication };
-    //console.log('--- Data ready to save: ---', dataToSave);
-
     try {
       const response = await fetch('/api/medications', {
         method: 'POST',
@@ -77,16 +73,6 @@ function AddMedicationForm() {
       setIsSaving(false);
     }
 
-    // --- Placeholder for API Call ---
-    /*
-    try {
-      await saveMedicationToDB(dataToSave);
-      router.push('/'); // Navigate back to landing page on success
-    } catch (error) {
-      console.error("Failed to save:", error);
-      alert("Failed to save medication.");
-    }
-    */
 
     // Simulate API call success/failure
     setTimeout(() => {
