@@ -1,8 +1,6 @@
+"use client"
 // src/app/dashboard/page.js
-
-'use client';
-
-import React from 'react';
+import React , {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation';
 // Import NextAuth client functions to check session status
 import { useSession, signOut } from 'next-auth/react';
@@ -11,6 +9,26 @@ function DashboardPage() {
   const router = useRouter();
   // 1. Check the session status
   const { data: session, status } = useSession();
+
+  const [meds, setMeds] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 2. Fetch today's medications to get the count
+  useEffect(() => {
+    const fetchTodayMeds = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      try {
+        const res = await fetch(`/api/medications/get-by-date?date=${today}`);
+        const data = await res.json();
+        setMeds(data || []);
+      } catch (err) {
+        console.error("Failed to fetch meds for dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTodayMeds();
+  }, []);
 
   const handleNavigate = (path) => {
     router.push(path);
@@ -50,9 +68,9 @@ function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
             </div>
-        <span className="text-4xl font-black tracking-tighter text-white uppercase">
-          Pill<span className="text-indigo-500">Pal</span>
-        </span>
+            <span className="text-4xl font-black tracking-tighter text-white uppercase">
+              Pill<span className="text-indigo-500">Pal</span>
+            </span>
           </div>
 
           {/* Auth/User Section */}
@@ -80,8 +98,8 @@ function DashboardPage() {
       </div>
 
       {/* Quick Action Buttons Container */}
-      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center">
-
+      {/* <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center"> */}
+      <div className="grid grid-cols-2 gap-6 w-full max-w-xl mx-auto">
         {/* Action 1: Add Medication Card */}
         <button
           className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
@@ -101,11 +119,28 @@ function DashboardPage() {
           <p className="text-lg font-bold text-teal-400">View Calendar</p>
           <p className="text-sm text-gray-400 mt-1">Check doses and track intake history.</p>
         </button>
+
+        <button
+          onClick={() => handleNavigate('/precautions')}
+          className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="text-3xl mb-2">🛡️</div>
+            <div className="text-lg mb-2">
+              {loading ? "..." : `${meds.length} Active Guidelines`}
+            </div>
+          </div>
+
+          <p className="text-lg font-bold text-teal-400">Daily Safety Instructions</p>
+          <p className="text-zinc-500 text-sm mt-1 text-left">Food pairings and activity warnings for today's doses.</p>
+
+          {/* Subtle Teal Glow */}
+          <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-500/10 transition-all"></div>
+        </button>
       </div>
     </div>
   );
 }
 
-// NOTE: You must wrap your entire application with <SessionProvider> 
 // (usually in your main layout file) for useSession() to work.
 export default DashboardPage;
