@@ -1,6 +1,6 @@
 "use client"
 // src/app/dashboard/page.js
-import React , {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 // Import NextAuth client functions to check session status
 import { useSession, signOut } from 'next-auth/react';
@@ -16,7 +16,10 @@ function DashboardPage() {
   // 2. Fetch today's medications to get the count
   useEffect(() => {
     const fetchTodayMeds = async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toLocaleDateString('en-CA', {
+        timeZone: 'America/New_York'
+      });
+      console.log("today", today)
       try {
         const res = await fetch(`/api/medications/get-by-date?date=${today}`);
         const data = await res.json();
@@ -62,7 +65,7 @@ function DashboardPage() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
 
           {/* Logo Section */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <div className="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <svg className="w-5 h-5 text-white rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -99,7 +102,7 @@ function DashboardPage() {
 
       {/* Quick Action Buttons Container */}
       {/* <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center"> */}
-      <div className="grid grid-cols-2 gap-6 w-full max-w-xl mx-auto">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-xl mx-auto">
         {/* Action 1: Add Medication Card */}
         <button
           className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
