@@ -140,6 +140,16 @@ function DashboardPage() {
           {/* Subtle Teal Glow */}
           <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-500/10 transition-all"></div>
         </button>
+
+        <button
+          onClick={() => router.push('/identifier')}
+                    className="flex-1 p-6 bg-gray-800 border border-indigo-600 rounded-xl shadow-2xl hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.02]"
+
+        >
+          <div className="text-3xl mb-2 group-hover:rotate-12 transition-transform">💊</div>
+          <h3 className="text-lg font-bold text-indigo-400">Pill Identifier</h3>
+          <p className="text-sm text-gray-400 mt-1">Check color, shape & imprint</p>
+        </button>
       </div>
     </div>
   );
