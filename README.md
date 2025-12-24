@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 💊 MediTrack Pro
 
-## Getting Started
+MediTrack Pro is an intelligent, high-performance medication management dashboard that bridges the gap between technical clinical data and patient-friendly care. It integrates official NIH RxNav, openFDA, and Google Gemini AI to provide a seamless experience for medication management.
 
-First, run the development server:
+## 🌟 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### ➕ **Smart Medication Entry**
+- **RxNorm Integration:** Search and validate medications against the National Library of Medicine's official database.
+- **Timezone Enforcement:** Precision scheduling using `America/New_York` (ET) to eliminate midnight UTC synchronization issues.
+- **RxCUI Mapping:** Automatically captures unique clinical identifiers for downstream safety checks.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📅 **Visual Treatment Calendar**
+- **30-Day Adherence Grid:** A high-contrast visual interface to track past compliance and future doses.
+- **Dynamic Status Tracking:** Real-time updates for "Taken," "Pending," and "Missed" medications.
+- **Contextual Details:** One-click access to specific dosing instructions for any chosen date.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 🛡️ **Safety & Identification Suite**
+- **FDA Guidelines:** Fetches official precautions and warnings directly from the [api.fda.gov](https://api.fda.gov) product labeling service.
+- **Visual Pill ID:** Generates 3D CSS digital pill representations based on physical attributes (Color, Shape, Imprint).
+- **AI Insights:** Utilizes Gemini 1.5 Flash to summarize complex medical data into concise, 1-2 line "Patient Notes."
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ **Technical Stack**
 
-## Learn More
+- **Framework:** [Next.js 15](https://nextjs.org/docs) (App Router)
+- **AI Engine:** [Google Gemini API](https://developers.google.com/ai)
+- **Data Sources:**
+  - [RxNav REST API](https://www.nlm.nih.gov/research/umls/rxnorm/index.html)
+  - [openFDA API](https://open.fda.gov/apis/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Icons:** [Lucide React](https://github.com/lucide-icons/lucide)
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 **Getting Started**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
+- **Node.js** 18.17 or later
+- A **Google AI Studio API Key** to access the Gemini AI functionality.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
+1. **Clone the repository:**
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git clone https://github.com/yourusername/meditrack-pro.git
+   cd meditrack-pro
