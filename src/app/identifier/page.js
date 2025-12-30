@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // Added useRef
 import { useRouter } from "next/navigation";
 import VisualPillId from "@/components/VisualPillId";
 
@@ -7,27 +7,42 @@ export default function IdentifierPage() {
   const [pillInfo, setPillInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  
+  // 1. Guard to prevent double execution in Strict Mode
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    // Only fetch if we haven't already
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     const fetchIdentities = async () => {
       setLoading(true);
       try {
         const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
         const res = await fetch(`/api/medications/get-by-date?date=${today}`);
         const meds = await res.json();
-        console.log("meds", meds)
+        
         if (meds.length > 0) {
-          const identityData = await Promise.all(
-            meds.map(async (m) => {
-              const idRes = await fetch('/api/medications/identify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: m.name })
-              });
-              return await idRes.json();
-            })
-          );
-          setPillInfo(identityData);
+          const results = [];
+          
+          // 2. Sequential Processing instead of Promise.all
+          // This avoids "bursting" the API with too many requests at once
+          for (const m of meds) {
+            const idRes = await fetch('/api/medications/identify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: m.name })
+            });
+            
+            const data = await idRes.json();
+            results.push(data);
+            
+            // 3. Small delay (1 second) between requests if there are many
+            if (meds.length > 1) await new Promise(r => setTimeout(r, 1000));
+          }
+          
+          setPillInfo(results);
         }
       } catch (err) {
         console.error("Identification error:", err);
@@ -35,6 +50,7 @@ export default function IdentifierPage() {
         setLoading(false);
       }
     };
+    
     fetchIdentities();
   }, []);
 
@@ -65,8 +81,14 @@ export default function IdentifierPage() {
             </div>
             {pillInfo.map((pill, idx) => (
               <div key={idx} className="space-y-2">
-                <h3 className="ml-4 text-sm font-black text-zinc-500 uppercase tracking-tighter">{pill.name}</h3>
-                <VisualPillId data={pill} />
+                <h3 className="ml-4 text-sm font-black text-zinc-500 uppercase tracking-tighter">{pill.name || "Unknown Medication"}</h3>
+                {pill.error ? (
+                  <div className="p-6 bg-zinc-900 rounded-3xl border border-red-900/50 text-red-400 text-sm">
+                    {pill.error}
+                  </div>
+                ) : (
+                  <VisualPillId data={pill} />
+                )}
               </div>
             ))}
           </div>

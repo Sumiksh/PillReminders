@@ -2,7 +2,7 @@
 
 export default function VisualPillId({ data }) {
   if (!data) return null;
-
+  console.log("pilldata", data)
   // Logic to determine CSS shape
   const shapeClass = data.shape?.toLowerCase().includes("round") 
     ? "rounded-full w-16 h-16" 
