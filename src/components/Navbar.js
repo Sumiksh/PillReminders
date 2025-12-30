@@ -19,7 +19,7 @@ export default function Navbar() {
               <Pill className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold tracking-tighter text-white">
-              Pill<span className="text-indigo-400">Pal</span>
+              Pill<span className="text-indigo-400">Scheduler</span>
             </span>
           </Link>
 
