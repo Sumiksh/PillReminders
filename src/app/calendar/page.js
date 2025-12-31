@@ -1,25 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Added router for back navigation
 import Calendar from "react-calendar";
-import Navbar from "@/components/Navbar"; // Reusing your professional Navbar
+import Navbar from "@/components/Navbar";
 import { 
   Calendar as CalendarIcon, 
   ChevronRight, 
   Pill, 
   Inbox, 
   Clock, 
-  AlertCircle 
+  AlertCircle,
+  ArrowLeft // Added for the back button
 } from "lucide-react";
 
 export default function CalendarPage() {
+  const router = useRouter();
   const [date, setDate] = useState(new Date());
   const [meds, setMeds] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchMedsForDate = async (selectedDate) => {
     setLoading(true);
-    // Standardizing date format to YYYY-MM-DD
     const offset = selectedDate.getTimezoneOffset();
     const adjustedDate = new Date(selectedDate.getTime() - (offset * 60 * 1000));
     const formattedDate = adjustedDate.toISOString().split('T')[0];
@@ -43,28 +45,39 @@ export default function CalendarPage() {
     <div className="min-h-screen bg-[#020617] text-slate-200 pb-20">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 pt-10">
+      <main className="max-w-5xl mx-auto px-4 pt-8">
         
-        {/* Header Section */}
-        <header className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <CalendarIcon className="w-5 h-5 text-indigo-400" />
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Intake Timeline</span>
+        {/* Navigation & Header Section */}
+        <div className="mb-10">
+          {/* Back Button */}
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-slate-500 hover:text-indigo-400 transition-colors mb-6 group w-fit"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm font-bold uppercase tracking-widest">Dashboard</span>
+          </button>
+
+          <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <CalendarIcon className="w-5 h-5 text-indigo-400" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Intake Timeline</span>
+              </div>
+              <h1 className="text-4xl font-extrabold text-white tracking-tight">
+                {date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+              </h1>
+              <p className="text-slate-400 mt-1">Select a date to review your medication history.</p>
             </div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight">
-              {date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-            </h1>
-            <p className="text-slate-400 mt-1">Select a date to review your medication history.</p>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-3 bg-slate-900/50 border border-white/5 p-2 pr-6 rounded-2xl">
-            <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-              <Pill className="w-5 h-5 text-indigo-400" />
+            
+            <div className="hidden md:flex items-center gap-3 bg-slate-900/50 border border-white/5 p-2 pr-6 rounded-2xl">
+              <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                <Pill className="w-5 h-5 text-indigo-400" />
+              </div>
+              <span className="text-sm font-semibold text-slate-300 tracking-tight">Pill Scheduler</span>
             </div>
-            <span className="text-sm font-semibold text-slate-300 tracking-tight">Pill Scheduler</span>
-          </div>
-        </header>
+          </header>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
@@ -114,7 +127,7 @@ export default function CalendarPage() {
                 {meds.map((med) => (
                   <div 
                     key={med.id} 
-                    className="group bg-slate-900/50 border border-white/5 hover:border-indigo-500/30 p-6 rounded-3xl transition-all duration-300"
+                    className="group bg-slate-900/50 border border-white/5 hover:border-indigo-500/30 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-indigo-500/5"
                   >
                     <div className="flex justify-between items-start mb-6">
                       <div className="flex gap-4">
@@ -137,7 +150,7 @@ export default function CalendarPage() {
                       {med.times.map((time) => (
                         <div 
                           key={time} 
-                          className="px-4 py-2 bg-slate-950 border border-white/5 rounded-xl text-[11px] font-black text-emerald-400 flex items-center gap-2 group-hover:border-emerald-500/20 transition-colors"
+                          className="px-4 py-2 bg-slate-950 border border-white/5 rounded-xl text-[11px] font-black text-emerald-400 flex items-center gap-2 group-hover:border-emerald-500/20 transition-colors shadow-inner"
                         >
                           <Clock className="w-3.5 h-3.5" />
                           {time}
