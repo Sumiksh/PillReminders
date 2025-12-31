@@ -39,5 +39,4 @@ PillReminder Pro is an intelligent, high-performance medication management dashb
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/meditrack-pro.git
-   cd meditrack-pro
+   git clone (https://github.com/Sumiksh/PillReminders.git)
