@@ -25,11 +25,6 @@ export default function Navbar() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-6">
-            {/* <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-950"></span>
-            </button> */}
-            
             <div className="h-8 w-[1px] bg-white/10 hidden sm:block"></div>
 
             <div className="flex items-center gap-3">
@@ -37,14 +32,6 @@ export default function Navbar() {
                 <span className="text-sm font-semibold text-slate-200 leading-none">{session?.user?.name}</span>
                 {/* <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Premium Member</span> */}
               </div>
-              
-              {/* {session?.user?.image ? (
-                <img src={session.user.image} alt="User" className="w-9 h-9 rounded-full border border-indigo-500/50" />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center border border-white/10">
-                  <User className="w-5 h-5 text-slate-400" />
-                </div>
-              )} */}
 
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
