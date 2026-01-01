@@ -118,3 +118,28 @@ classDiagram
     SafetyGuideModule ..> GeminiAIService : summarizes data
     IdentifierModule ..> GeminiAIService : visual mapping
 ```
+
+
+### 🏗️ Sequence Diagram
+sequenceDiagram
+    participant U as User
+    participant D as Dashboard (Next.js)
+    participant R as RxNav API
+    participant F as openFDA API
+    participant G as Gemini AI
+
+    U->>D: Enter Medication Name & Time
+    D->>R: Request RxCUI Validation
+    R-->>D: Return Official RxCUI & Name
+    
+    rect rgb(20, 20, 40)
+        Note right of D: Trigger Safety Check
+        D->>F: Fetch Clinical Usage & Warnings (RxCUI)
+        F-->>D: Return FDA Product Labels
+    end
+
+    D->>G: Send Complex FDA Text
+    G-->>D: Return 1-2 Line "Patient Note"
+
+    D->>D: Map Physical Attributes (Color/Shape)
+    D-->>U: Display Schedule + Safety Guide + 3D Pill ID
