@@ -52,9 +52,9 @@ PillReminder is a high-performance clinical dashboard designed to simplify compl
    git clone (https://github.com/Sumiksh/PillReminders.git)
 
 
-🏗️ PillReminder Pro Class Architecture
+### 🏗️ PillReminder Pro Class Architecture
 This diagram illustrates how the frontend components interact with the backend services and external APIs to manage medication data.
-
+```mermaid
 classDiagram
     class MedicationDashboard {
         +User current_user
@@ -117,3 +117,4 @@ classDiagram
     SafetyGuideModule ..> OpenFDAService : fetches clinical data
     SafetyGuideModule ..> GeminiAIService : summarizes data
     IdentifierModule ..> GeminiAIService : visual mapping
+```
