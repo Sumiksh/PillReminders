@@ -11,7 +11,7 @@ This README has been updated to reflect the specific logic of your four core mod
 Intelligent Medication Management & Clinical Safety Dashboard
 PillReminder is a high-performance clinical dashboard designed to simplify complex medication regimens. It bridges the gap between official medical databases and daily patient care using a modern, accessible interface.
 
-🌟 Dashboard Modules
+## 🌟 Dashboard Modules
 ➕ 1. Add New Medication
 - Precision Scheduling: Define exactly what time a medication needs to be taken.
 - RxNorm Validation: Search medications against the National Library of Medicine database to ensure clinical accuracy.
@@ -121,6 +121,7 @@ classDiagram
 
 
 ### 🏗️ Sequence Diagram
+```mermaid
 sequenceDiagram
     participant U as User
     participant D as Dashboard (Next.js)
@@ -143,3 +144,4 @@ sequenceDiagram
 
     D->>D: Map Physical Attributes (Color/Shape)
     D-->>U: Display Schedule + Safety Guide + 3D Pill ID
+```
