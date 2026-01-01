@@ -47,7 +47,7 @@ function AuthPage() {
               <Pill className="w-8 h-8 text-indigo-400" />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">
-              Pill <span className="text-indigo-400">Pal</span>
+              Pill <span className="text-indigo-400">Scheduler</span>
             </h1>
             <p className="text-gray-400 text-sm">Your health, perfectly timed.</p>
           </div>
