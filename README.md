@@ -133,7 +133,7 @@ sequenceDiagram
     D->>R: Request RxCUI Validation
     R-->>D: Return Official RxCUI & Name
     
-    rect rgb(20, 20, 40)
+    rect rgba(51, 209, 196, 1)
         Note right of D: Trigger Safety Check
         D->>F: Fetch Clinical Usage & Warnings (RxCUI)
         F-->>D: Return FDA Product Labels
