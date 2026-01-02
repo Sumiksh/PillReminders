@@ -4,54 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Navbar from '@/components/Navbar';
-import { NextResponse } from 'next/server';
-import { getServerSession } from "next-auth/next"; // Make sure it's from next-auth/next
-import { authOptions } from "@/utils/authOptions"; // CHECK THIS PATH
-import { db } from '@/utils/firebase'; 
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { 
   Plus, Calendar, ShieldCheck, Search, 
   ChevronRight, Activity, Clock, Scan, Pill, X
 } from 'lucide-react';
-
-export async function GET(request) {
-  try {
-    // This is where the error was happening
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.email) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const queryStr = searchParams.get('q');
-    if (!queryStr) return NextResponse.json([]);
-
-    // Capitalize first letter (tylenol -> Tylenol)
-    const normalizedQuery = queryStr.charAt(0).toUpperCase() + queryStr.slice(1);
-
-    const medsRef = collection(db, 'users', session.user.email, 'medications');
-
-    const q = query(
-      medsRef,
-      where("name", ">=", normalizedQuery),
-      where("name", "<=", normalizedQuery + '\uf8ff'),
-      limit(5)
-    );
-
-    const querySnapshot = await getDocs(q);
-    const results = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    return NextResponse.json(results);
-  } catch (error) {
-    console.error("Search Error:", error);
-    return NextResponse.json({ error: "Search failed" }, { status: 500 });
-  }
-}
-
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -65,7 +21,7 @@ export default function DashboardPage() {
   const [isSearching, setIsSearching] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // 1. Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -76,16 +32,15 @@ export default function DashboardPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // --- Real-time Search Logic ---
+  // 2. Real-time Search Logic (Debounced)
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length > 1) {
         setIsSearching(true);
         try {
-          // Pass the query to your API route
           const res = await fetch(`/api/medications/search?q=${encodeURIComponent(searchQuery)}`);
           const data = await res.json();
-          setSearchResults(data);
+          setSearchResults(data || []);
         } catch (err) {
           console.error("Search error:", err);
         } finally {
@@ -94,11 +49,12 @@ export default function DashboardPage() {
       } else {
         setSearchResults([]);
       }
-    }, 300); // 300ms debounce
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
+  // 3. Fetch Today's Medications
   useEffect(() => {
     const fetchTodayMeds = async () => {
       const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
@@ -115,6 +71,14 @@ export default function DashboardPage() {
     if (status === 'authenticated') fetchTodayMeds();
   }, [status]);
 
+  // 4. Handle "Enter" Key Press
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+      router.push(`/search-results?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  // Auth Guard
   if (status === 'loading') return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
       <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
@@ -132,6 +96,8 @@ export default function DashboardPage() {
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        
+        {/* Welcome Section */}
         <header className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
             Good morning, <span className="text-indigo-400">{session?.user?.name?.split(' ')[0]}</span>
@@ -147,7 +113,8 @@ export default function DashboardPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search your medications..."
+              onKeyDown={handleKeyDown}
+              placeholder="Search medications (Press Enter to see all)..."
               className="w-full pl-12 pr-12 py-4 bg-slate-900/50 border border-white/5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-slate-900 transition-all text-white placeholder:text-slate-600"
             />
             {searchQuery && (
@@ -167,7 +134,7 @@ export default function DashboardPage() {
                 {searchResults.map((result) => (
                   <button
                     key={result.id}
-                    onClick={() => router.push(`/medication/${result.id}`)}
+                    onClick={() => router.push(`/search-results?q=${encodeURIComponent(result.name)}`)}
                     className="w-full flex items-center gap-4 p-3 hover:bg-white/5 rounded-xl transition-colors text-left"
                   >
                     <div className="bg-indigo-500/20 p-2 rounded-lg">
@@ -180,6 +147,13 @@ export default function DashboardPage() {
                     <ChevronRight className="ml-auto w-4 h-4 text-slate-600" />
                   </button>
                 ))}
+                
+                <button 
+                  onClick={() => router.push(`/search-results?q=${encodeURIComponent(searchQuery)}`)}
+                  className="w-full p-3 text-center text-[10px] font-black text-indigo-400 hover:bg-white/5 transition-colors border-t border-white/5 tracking-widest"
+                >
+                  VIEW ALL RESULTS
+                </button>
               </div>
             </div>
           )}
@@ -187,6 +161,7 @@ export default function DashboardPage() {
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-full">
+          
           <button
             onClick={() => router.push('/add-medication')}
             className="md:col-span-2 md:row-span-2 relative overflow-hidden group p-8 rounded-3xl bg-indigo-600 hover:bg-indigo-500 transition-all text-left flex flex-col justify-between min-h-[300px]"
@@ -206,26 +181,45 @@ export default function DashboardPage() {
             <div className="bg-teal-500/10 p-4 rounded-2xl">
               <Calendar className="w-8 h-8 text-teal-400" />
             </div>
-            <div><h3 className="text-xl font-bold text-white">Calendar</h3><p className="text-slate-400 text-sm">View intake history</p></div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Calendar</h3>
+              <p className="text-slate-400 text-sm">View intake history</p>
+            </div>
           </button>
 
           <button onClick={() => router.push('/precautions')} className="bg-slate-900 border border-white/5 p-6 rounded-3xl hover:bg-slate-800 transition-all text-left flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <ShieldCheck className="w-8 h-8 text-amber-400" />
-              <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-1 rounded">{loading ? '...' : meds.length} ACTIVE</span>
+              <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-1 rounded">
+                {loading ? '...' : meds.length} ACTIVE
+              </span>
             </div>
-            <div><h3 className="text-lg font-bold text-white mt-4">Safety Guide</h3><p className="text-slate-500 text-xs mt-1">Food & interactions</p></div>
+            <div>
+              <h3 className="text-lg font-bold text-white mt-4">Safety Guide</h3>
+              <p className="text-slate-500 text-xs mt-1">Food & interactions</p>
+            </div>
           </button>
 
           <button onClick={() => router.push('/identifier')} className="bg-slate-900 border border-white/5 p-6 rounded-3xl hover:bg-slate-800 transition-all text-left flex flex-col justify-between">
             <Scan className="w-8 h-8 text-purple-400" />
-            <div><h3 className="text-lg font-bold text-white mt-4">Identifier</h3><p className="text-slate-500 text-xs mt-1">Scan or describe pill</p></div>
+            <div>
+              <h3 className="text-lg font-bold text-white mt-4">Identifier</h3>
+              <p className="text-slate-500 text-xs mt-1">Scan or describe pill</p>
+            </div>
           </button>
+
         </div>
 
+        {/* Footer Status */}
         <div className="mt-12 p-4 rounded-2xl bg-slate-900/30 border border-white/5 flex flex-wrap gap-8 items-center justify-center">
-          <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-indigo-400" /><span className="text-xs text-slate-400 font-medium italic">Status: System Online</span></div>
-          <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-indigo-400" /><span className="text-xs text-slate-400 font-medium">Last Sync: Just now</span></div>
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-indigo-400" />
+            <span className="text-xs text-slate-400 font-medium italic">Status: System Online</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-indigo-400" />
+            <span className="text-xs text-slate-400 font-medium">Last Sync: Just now</span>
+          </div>
         </div>
       </main>
     </div>
