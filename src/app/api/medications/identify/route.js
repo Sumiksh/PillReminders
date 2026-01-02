@@ -1,29 +1,85 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
+// 1. Initialize the SDK with your API Key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// 2. Define the exact JSON structure for the pill data
+const pillSchema = {
+  description: "Pharmaceutical identification data for a pill",
+  type: SchemaType.OBJECT,
+  properties: {
+    imprint: {
+      type: SchemaType.STRING,
+      description: "The letters or numbers stamped on the pill surface.",
+    },
+    color: {
+      type: SchemaType.STRING,
+      description: "The primary color of the medication (e.g., White, Blue/Yellow).",
+    },
+    shape: {
+      type: SchemaType.STRING,
+      description: "The geometric shape (e.g., Round, Oval, Capsule-shaped).",
+    },
+    visualDescription: {
+      type: SchemaType.STRING,
+      description: "A one-sentence description of the pill's overall look.",
+    },
+    isValidMedicine: {
+      type: SchemaType.BOOLEAN,
+      description: "True if the input is a known medicine, False otherwise.",
+    }
+  },
+  required: ["imprint", "color", "shape", "visualDescription", "isValidMedicine"],
+};
 
 export async function POST(request) {
   try {
     const { name } = await request.json();
 
-    // SWITCH TO FLASH-LITE FOR HIGHER RATE LIMITS
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-lite", // Much more stable for free tier
-      generationConfig: { responseMimeType: "application/json" }
+    if (!name) {
+      return Response.json({ error: "Medicine name is required" }, { status: 400 });
+    }
+
+    // 3. Configure the model with System Instructions
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash", // Use 1.5-flash or 2.0-flash-lite for speed
+      systemInstruction: `You are a strict pharmaceutical database assistant. 
+      Your only job is to provide physical identification characteristics of medications. 
+      If the user provides a name that is not a real medicine, set isValidMedicine to false. 
+      Do not provide medical advice.`,
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: pillSchema,
+      },
     });
 
-    const prompt = `Identify physical attributes for: ${name}. Return JSON: {imprint, color, shape, visualDescription}`;
-
+    // 4. Generate the content
+    const prompt = `Identify the physical characteristics for the medication: ${name}.`;
     const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const responseText = result.response.text();
 
-    return Response.json({ name, ...JSON.parse(text) });
+    // 5. Parse and return the JSON
+    const pillData = JSON.parse(responseText);
+
+    return Response.json({ 
+      query: name,
+      data: pillData 
+    });
 
   } catch (error) {
-    // If we still hit a 429, return a cleaner message to the UI
+    console.error("AI Error:", error);
+
+    // Handle Rate Limiting (429) specifically
     if (error.message?.includes("429")) {
-      return Response.json({ error: "System busy. Please wait 10 seconds." }, { status: 429 });
+      return Response.json(
+        { error: "Quota exceeded. Please wait a moment before trying again." }, 
+        { status: 429 }
+      );
     }
-    return Response.json({ error: "Error identifying pill" }, { status: 500 });
+
+    return Response.json(
+      { error: "Internal Server Error" }, 
+      { status: 500 }
+    );
   }
 }
