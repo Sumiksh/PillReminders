@@ -142,7 +142,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">{result.name}</p>
-                      <p className="text-xs text-slate-500">{result.dosage} • {result.frequency}</p>
+                      <p className="text-xs text-slate-500">{result.dosage} • {result.frequency}  • {result.startDate}</p>
                     </div>
                     <ChevronRight className="ml-auto w-4 h-4 text-slate-600" />
                   </button>
