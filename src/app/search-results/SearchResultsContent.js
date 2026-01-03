@@ -43,8 +43,6 @@ export default function SearchResultsContent() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 pb-12">
-      <Navbar />
-
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
         {/* Navigation Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
