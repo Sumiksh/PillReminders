@@ -8,7 +8,6 @@ Based on the core interface, the platform is divided into four high-impact modul
 This README has been updated to reflect the specific logic of your four core modules and how they interact with clinical APIs.
 
 ## 💊 PillScheduler
-Intelligent Medication Management & Clinical Safety Dashboard
 PillReminder is a high-performance clinical dashboard designed to simplify complex medication regimens. It bridges the gap between official medical databases and daily patient care using a modern, accessible interface.
 
 ## 🌟 Dashboard Modules
