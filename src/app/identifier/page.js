@@ -96,7 +96,7 @@ export default function IdentifierPage() {
             
             <div className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 border border-white/5 rounded-full">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Verified Clinical Data</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Data From Gemini</span>
             </div>
           </div>
         </header>

@@ -36,7 +36,14 @@ export async function POST(request) {
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       temperature: 0,
-      systemInstruction: "You are a pharmaceutical database. Provide physical characteristics for the list of medications provided. If a name is invalid, set isValidMedicine to false.",
+      // systemInstruction: "You are a pharmaceutical database. Provide physical characteristics for the list of medications provided. If a name is invalid, set isValidMedicine to false.",
+      systemInstruction: `You are a pharmaceutical database. 
+        When identifying medications, you MUST follow these rules for consistency:
+        1. Prioritize the most common U.S. Brand-Name version (e.g., Tylenol by McNeil).
+        2. Format imprints exactly: Use uppercase and include quotes (e.g., 'TYLENOL 500').
+        3. For shape, use standard terms: 'Oval', 'Round', 'Capsule-shape'.
+        4. If a pill has markings on two sides, format it as: 'Side A' / 'Side B'.
+        5. Do not paraphrase. If you described 'Tylenol 500mg' as 'White/Oval' once, do not change it to 'Off-white/Elongated' later.`,
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: pillBatchSchema,
