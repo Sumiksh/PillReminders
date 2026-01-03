@@ -33,18 +33,28 @@ export default function IdentifierPage() {
         const meds = await res.json();
         
         if (meds.length > 0) {
-          const results = [];
-          for (const m of meds) {
-            const idRes = await fetch('/api/medications/identify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: m.name })
-            });
-            const data = await idRes.json();
-            results.push({ ...data, name: m.name });
-            if (meds.length > 1) await new Promise(r => setTimeout(r, 800));
-          }
-          setPillInfo(results);
+          const names = meds.map(m => m.name);
+          // 2. Make ONE batch call to the AI
+          const idRes = await fetch('/api/medications/identify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ names }) // Sending the whole list
+          });
+          const batchData = await idRes.json();
+          setPillInfo(batchData);
+          // const results = [];
+          // const names = meds.map(m => m.name); 
+          // for (const m of meds) {
+          //   const idRes = await fetch('/api/medications/identify', {
+          //     method: 'POST',
+          //     headers: { 'Content-Type': 'application/json' },
+          //     body: JSON.stringify({ name: m.name })
+          //   });
+          //   const data = await idRes.json();
+          //   results.push({ ...data, name: m.name });
+          //   if (meds.length > 1) await new Promise(r => setTimeout(r, 800));
+          // }
+          // setPillInfo(results);
         }
       } catch (err) {
         console.error("Identification error:", err);
