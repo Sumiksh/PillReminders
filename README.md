@@ -13,7 +13,6 @@ PillReminder is a high-performance clinical dashboard designed to simplify compl
 ## 🌟 Dashboard Modules
 ➕ 1. Add New Medication
 - Precision Scheduling: Define exactly what time a medication needs to be taken.
-- RxNorm Validation: Search medications against the National Library of Medicine database to ensure clinical accuracy.
 - Timezone Enforcement: Utilizes America/New_York (ET) logic to ensure scheduled times remain consistent across devices.
 
 📅 2. Medication Calendar
@@ -24,10 +23,14 @@ PillReminder is a high-performance clinical dashboard designed to simplify compl
 - Clinical Insights: Leverages the openFDA API to provide detailed information about your daily medications.
 - Safety First: Displays critical precautions and clinical usage data to prevent adverse reactions.
 
-🔍 4. Medication Identifier
+✨ 4. Medication Identifier
 - Physical Verification: Provides specific details regarding the color, shape, and imprint of medications.
 - Visual Pill ID: Generates digital 3D-styled representations to help users visually confirm they are taking the correct pill.
 - AI Summaries: Uses Gemini 1.5 Flash to find visual features like color and imprint for the pills.
+
+🔎 5.Search Functionality
+- Firebase Querying: Efficiently search and filter your personalized medication records stored in Firestore.
+- Historical Retrieval: Instantly locate past medications by querying the database for historical entries and archived schedules.
 
 ## 🛠️ **Technical Stack**
 - **Framework:** [Next.js 15](https://nextjs.org/docs) (App Router)
