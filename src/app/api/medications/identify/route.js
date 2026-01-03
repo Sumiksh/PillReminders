@@ -43,6 +43,7 @@ export async function POST(request) {
     // 3. Configure the model with System Instructions
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash", // Use 1.5-flash or 2.0-flash-lite for speed
+      temperature: 0,
       systemInstruction: `You are a strict pharmaceutical database assistant. 
       Your only job is to provide physical identification characteristics of medications. 
       If the user provides a name that is not a real medicine, set isValidMedicine to false. 
