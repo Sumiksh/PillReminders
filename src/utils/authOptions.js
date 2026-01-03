@@ -9,11 +9,19 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/',
+    signIn: '/', // Your custom login page
     error: '/',
   },
   debug: process.env.NODE_ENV === 'development',
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      // Default behavior: always go to dashboard after login
+      return `${baseUrl}/dashboard`;
+    },
     async session({ session, token }) {
       if (token?.sub) {
         session.user.id = token.sub;

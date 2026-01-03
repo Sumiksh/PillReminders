@@ -90,7 +90,7 @@ export default function DashboardPage() {
     }
   };
 
-  useEffect(() => {
+    useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
     }

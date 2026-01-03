@@ -14,7 +14,7 @@ function AuthPage() {
     setIsLoading(true);
     try {
       const result = await signIn('google', {
-        redirect: false,
+        redirect: true,
         callbackUrl: '/dashboard',
       });
 
