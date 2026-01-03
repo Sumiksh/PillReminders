@@ -23,11 +23,11 @@ PillReminder is a high-performance clinical dashboard designed to simplify compl
 🛡️ 3. Safety Guide
 - Clinical Insights: Leverages the openFDA API to provide detailed information about your daily medications.
 - Safety First: Displays critical precautions and clinical usage data to prevent adverse reactions.
-- AI Summaries: Uses Gemini 1.5 Flash to condense complex FDA warnings into 1-2 line "Patient Notes".
 
 🔍 4. Medication Identifier
 - Physical Verification: Provides specific details regarding the color, shape, and imprint of medications.
 - Visual Pill ID: Generates digital 3D-styled representations to help users visually confirm they are taking the correct pill.
+- AI Summaries: Uses Gemini 1.5 Flash to find visual features like color and imprint for the pills.
 
 ## 🛠️ **Technical Stack**
 - **Framework:** [Next.js 15](https://nextjs.org/docs) (App Router)
