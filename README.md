@@ -53,6 +53,30 @@ PillReminder is a high-performance clinical dashboard designed to simplify compl
    ```bash
    git clone (https://github.com/Sumiksh/PillReminders.git)
 
+2. **Install dependencies:**
+npm install
+
+3. **Configure env variable**
+# Authentication (Next-Auth)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_secret_key
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# AI Integration
+GEMINI_API_KEY=your_gemini_api_key
+
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+4. **Run the development server**
+npm run dev
+
 
 ### 🏗️ PillScheduler Class Architecture
 This diagram illustrates how the frontend components interact with the backend services and external APIs to manage medication data.
