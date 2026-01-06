@@ -5,6 +5,13 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "select_account", // This forces the "Choose an account" screen
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
