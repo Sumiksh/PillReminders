@@ -2,6 +2,9 @@
 
 💊PillScheduler is an intelligent, high-performance medication management dashboard that bridges the gap between technical clinical data and patient-friendly care. It integrates official NIH RxNav, openFDA, and Google Gemini AI to provide a seamless experience for medication management.
 
+# ▶️ Youtube
+[How PillScheduler Works](https://www.youtube.com/watch?v=aWqIIGnwpis&t=2s)
+
 ## 🌟 Key Features
 🌟 Dashboard Overview
 Based on the core interface, the platform is divided into four high-impact modules:
